@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  reverse-proxy:
+    image: nginx:latest
+    container_name: reverse-proxy
+    volumes:
+      - ./nginx/reverse-proxy:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/www/certbot:/var/www/certbot
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - portfolio_nginx
+      - project_nginx
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/www/certbot:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    depends_on:
+      - reverse-proxy
+
+  portfolio_nginx:
+    image: nginx:portfolio
+    container_name: portfolio.nginx
+    volumes:
+      - ./portfolio/nginx:/etc/nginx/conf.d
+      - ./portfolio/media_root:/app/media
+      - ./portfolio/static_root:/app/static
+    expose:
+      - "8443"
+
+  project_nginx:
+    image: nginx:project
+    container_name: project.nginx
+    volumes:
+      - ./project/nginx:/etc/nginx/conf.d
+      - ./project/media_root:/app/media
+      - ./project/static_root:/app/static
+    expose:
+      - "443"

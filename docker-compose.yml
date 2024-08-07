@@ -34,7 +34,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ../Rental-Platform-PinkRent:/app
+      - ../Rental-Platform-PinkRent/PinkRent:/app
     depends_on:
       - project_db
     links:

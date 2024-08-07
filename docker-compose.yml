@@ -41,7 +41,7 @@ services:
     links:
       - project_db:postgres
     command: >
-      bash -c "cd /app/project &&
+      bash -c "cd /app/PinkRent &&
                python wait_for_postgres.py &&
                python manage.py migrate &&
                python manage.py collectstatic --noinput &&

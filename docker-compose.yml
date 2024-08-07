@@ -12,8 +12,8 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - portfolio_nginx
-      - project_nginx
+      - project_dev
+      - portfolio_dev
 
   certbot:
     image: certbot/certbot
@@ -24,22 +24,72 @@ services:
     depends_on:
       - reverse-proxy
 
-  portfolio_nginx:
-    image: nginx:portfolio
-    container_name: portfolio.nginx
+  project_dev:
+    build: ../Rental-Platform-PinkRent
+    image: project:dev
+    container_name: project.dev
+    tty: true
+    stdin_open: true
+    restart: always
+    ports:
+      - 8000:8000
     volumes:
-      - ./portfolio/nginx:/etc/nginx/conf.d
-      - ./portfolio/media_root:/app/media
-      - ./portfolio/static_root:/app/static
-    expose:
-      - "8443"
+      - ../Rental-Platform-PinkRent/PinkRent:/app
+    depends_on:
+      - project_db
+    links:
+      - project_db:postgres
+    command: >
+      bash -c "python wait_for_postgres.py &&
+               python manage.py migrate &&
+               python manage.py collectstatic --noinput &&
+               gunicorn PinkRent.wsgi --bind 0.0.0.0:8000"
 
-  project_nginx:
-    image: nginx:project
-    container_name: project.nginx
+  project_db:
+    image: postgres
+    container_name: project.db
+    restart: always
+    ports:
+      - 5432:5432
     volumes:
-      - ./project/nginx:/etc/nginx/conf.d
-      - ./project/media_root:/app/media
-      - ./project/static_root:/app/static
-    expose:
-      - "443"
+      - ../Rental-Platform-PinkRent/dbdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: project
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: 5432
+
+  portfolio_dev:
+    build: ../portfolio-website
+    image: portfolio:dev
+    container_name: portfolio.dev
+    tty: true
+    stdin_open: true
+    restart: always
+    ports:
+      - 8001:8001
+    volumes:
+      - ../portfolio-website:/app
+    depends_on:
+      - portfolio_db
+    links:
+      - portfolio_db:postgres
+    command: >
+      bash -c "python wait_for_postgres.py &&
+               python manage.py migrate &&
+               python manage.py collectstatic --noinput &&
+               gunicorn Portfolio.wsgi --bind 0.0.0.0:8001"
+
+  portfolio_db:
+    image: postgres
+    container_name: portfolio.db
+    restart: always
+    ports:
+      - 5433:5433
+    volumes:
+      - ../portfolio-website/dbdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: 5433

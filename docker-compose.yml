@@ -69,13 +69,10 @@ services:
     ports:
       - 8001:8001
     volumes:
-      - ../portfolio-website:/app
-    depends_on:
-      - portfolio_db
-    links:
-      - portfolio_db:postgres
+      - ./portfolio:/app
+      - ./portfolio/db.sqlite3:/app/portfolio/db.sqlite3
     command: >
-      bash -c "python wait_for_postgres.py &&
-               python manage.py migrate &&
+      bash -c "python manage.py migrate &&
                python manage.py collectstatic --noinput &&
-               gunicorn Portfolio.wsgi --bind 0.0.0.0:8001"
+               gunicorn portfolio.wsgi --bind 0.0.0.0:8001"
+

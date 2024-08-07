@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   reverse-proxy:
-    build: ./nginx-reverse-proxy
+    build: ./nginx
     image: nginx:custom
     container_name: reverse-proxy
     volumes:

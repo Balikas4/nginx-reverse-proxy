@@ -35,7 +35,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ../Rental-Platform-PinkRent/PinkRent:/app/PinkRent
+      - ../Rental-Platform-PinkRent:/app/PinkRent
     depends_on:
       - project_db
     links:
@@ -71,7 +71,7 @@ services:
     ports:
       - 8001:8001
     volumes:
-      - ../portfolio-website/portfolio:/app/portfolio
+      - ../portfolio-website:/app/portfolio
       - ../portfolio-website/portfolio/db.sqlite3:/app/portfolio/db.sqlite3
     command: >
       bash -c "cd /app/portfolio &&

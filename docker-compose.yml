@@ -9,6 +9,10 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/certbot:/var/www/certbot
+      - ../Rental-Platform-PinkRent/PinkRent/static_root:/app/static
+      - ../Rental-Platform-PinkRent/PinkRent/media_root:/app/media
+      - ../portfolio-website/portfolio/media_root:/app/media
+      - ../portfolio-website/portfolio/static_root:/app/static
     ports:
       - "80:80"
       - "443:443"
@@ -36,8 +40,6 @@ services:
       - 8000:8000
     volumes:
       - ../Rental-Platform-PinkRent:/app
-      - ../Rental-Platform-PinkRent/PinkRent/static_root:/app/static
-      - ../Rental-Platform-PinkRent/PinkRent/media_root:/app/media
     depends_on:
       - project_db
     links:
@@ -75,8 +77,6 @@ services:
     volumes:
       - ../portfolio-website:/app
       - ../portfolio-website/db.sqlite3:/app/db.sqlite3
-      - ./portfolio/media_root:/app/media
-      - ./portfolio/static_root:/app/static
     command: >
       bash -c "cd /app/portfolio &&
                python manage.py migrate &&

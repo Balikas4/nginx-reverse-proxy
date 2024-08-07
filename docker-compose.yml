@@ -2,10 +2,9 @@ version: '3.8'
 
 services:
   reverse-proxy:
-    image: nginx:latest
+    build: ./nginx  # Use build instead of image to build from Dockerfile
     container_name: reverse-proxy
     volumes:
-      - ./nginx:/etc/nginx/conf.d
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/certbot:/var/www/certbot
     ports:

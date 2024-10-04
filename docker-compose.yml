@@ -21,7 +21,9 @@ services:
       - portfolio_dev
 
   certbot:
-    image: certbot/certbot
+    build:
+      context: ./certbot  # Point to the certbot directory
+      dockerfile: Dockerfile  # Specify the Dockerfile name if it's not the default
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/certbot:/var/www/certbot

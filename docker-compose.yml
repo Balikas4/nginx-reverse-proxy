@@ -54,7 +54,7 @@ services:
                gunicorn PinkRent.wsgi --bind 0.0.0.0:8000"
 
   project_db:
-    image: postgres
+    image: postgres:16
     container_name: project.db
     restart: always
     ports:

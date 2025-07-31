@@ -11,14 +11,14 @@ services:
       - /var/www/certbot:/var/www/certbot
       - ../Rental-Platform-PinkRent/PinkRent/static_root:/app/PinkRent/static
       - ../Rental-Platform-PinkRent/PinkRent/media_root:/app/PinkRent/media
-      - ../portfolio-website/portfolio/media_root:/app/portfolio/media
-      - ../portfolio-website/portfolio/static_root:/app/portfolio/static
+      # - ../portfolio-website/portfolio/media_root:/app/portfolio/media
+      # - ../portfolio-website/portfolio/static_root:/app/portfolio/static
     ports:
       - "80:80"
       - "443:443"
     depends_on:
       - project_dev
-      - portfolio_dev
+      # - portfolio_dev
 
   certbot:
     build:
@@ -67,20 +67,20 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_PORT: 5432
 
-  portfolio_dev:
-    build: ../portfolio-website
-    image: portfolio:dev
-    container_name: portfolio.dev
-    tty: true
-    stdin_open: true
-    restart: always
-    ports:
-      - 8001:8001
-    volumes:
-      - ../portfolio-website:/app
-      - ../portfolio-website/db.sqlite3:/app/db.sqlite3
-    command: >
-      bash -c "cd /app/portfolio &&
-               python manage.py migrate &&
-               python manage.py collectstatic --noinput &&
-               gunicorn portfolio.wsgi --bind 0.0.0.0:8001"
+  # portfolio_dev:
+  #   build: ../portfolio-website
+  #   image: portfolio:dev
+  #   container_name: portfolio.dev
+  #   tty: true
+  #   stdin_open: true
+  #   restart: always
+  #   ports:
+  #     - 8001:8001
+  #   volumes:
+  #     - ../portfolio-website:/app
+  #     - ../portfolio-website/db.sqlite3:/app/db.sqlite3
+  #   command: >
+  #     bash -c "cd /app/portfolio &&
+  #              python manage.py migrate &&
+  #              python manage.py collectstatic --noinput &&
+  #              gunicorn portfolio.wsgi --bind 0.0.0.0:8001"
